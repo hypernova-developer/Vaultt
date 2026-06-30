@@ -16,3 +16,4 @@ Do NOT run the installation script as root. Execute it as a standard user so the
 ```bash
 chmod +x init.sh
 ./init.sh
+```
