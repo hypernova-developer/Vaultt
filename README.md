@@ -43,3 +43,8 @@ sudo vaultt --remove pass=0
 # Completely remove Vaultt files, directory, and the global binary from the system
 sudo vaultt --uninstall
 ```
+
+## Storage Path
+
+All entries are piped securely into:
+/home/username/vaultt/passwords.txt
