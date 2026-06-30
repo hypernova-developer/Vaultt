@@ -48,3 +48,9 @@ sudo vaultt --uninstall
 
 All entries are piped securely into:
 /home/username/vaultt/passwords.txt
+
+## Ownership and Licensing
+This project belongs unconditionally to the community. 
+Vaultt is being developed by hypernova-developer. 
+This project is protected by GNU GPL v3.0 License. 
+If someone uses Vaultt in their project, they will have to release their work open-sourced. 
