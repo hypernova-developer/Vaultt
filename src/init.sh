@@ -12,18 +12,22 @@ USER_HOME="/home/$TARGET_USER"
 mkdir -p "$USER_HOME/vaultt"
 touch "$USER_HOME/vaultt/passwords.txt"
 
-echo "Requesting sudo privileges to lock the storage file permissions..."
+echo "Requesting sudo privileges to lock files and install to global PATH..."
 sudo chmod 000 "$USER_HOME/vaultt/passwords.txt"
 sudo chown root:root "$USER_HOME/vaultt/passwords.txt"
 
 g++ -O3 -static -std=c++17 -DVAULTT_USER=\"$TARGET_USER\" main.cpp -o vaultt
 
 if [ $? -eq 0 ]; then
+  sudo cp vaultt /usr/local/bin/
   echo "--------------------------------------------------"
-  echo "Compilation successful! 'vaultt' binary created."
+  echo "Compilation and installation successful!"
+  echo "Binary copied globally to /usr/local/bin/vaultt"
   echo "Storage file initialized at: $USER_HOME/vaultt/passwords.txt"
   echo "Permissions restricted (chmod 000)."
-  echo "Remember: You must run the 'vaultt' binary with sudo."
+  echo "--------------------------------------------------"
+  echo "Now you can run Vaultt from anywhere using:"
+  echo "sudo vaultt"
   echo "--------------------------------------------------"
 else
   echo "Compilation failed."

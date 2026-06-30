@@ -23,6 +23,7 @@ class VaulttEngine
 {
 private:
     std::string storage_file_path = "/home/" + std::string(VAULTT_USER) + "/vaultt/passwords.txt";
+    std::string binary_file_path = "/usr/local/bin/vaultt";
 
 public:
     VaulttEngine()
@@ -126,6 +127,26 @@ public:
         entries.erase(entries.begin() + index);
         return save_entries(entries);
     }
+
+    void self_uninstall()
+    {
+        std::cout << "Removing secure storage directory and passwords...\n";
+        fs::path p(storage_file_path);
+        if (fs::exists(p.parent_path()))
+        {
+            fs::remove_all(p.parent_path());
+        }
+
+        std::cout << "Removing Vaultt global binary...\n";
+        if (fs::exists(binary_file_path))
+        {
+            fs::remove(binary_file_path);
+        }
+
+        std::cout << "--------------------------------------------------\n"
+                  << "Vaultt has been completely removed from the system.\n"
+                  << "--------------------------------------------------\n";
+    }
 };
 
 void print_help()
@@ -137,7 +158,8 @@ void print_help()
               << "  vaultt --version               Display application version and logo\n"
               << "  vaultt --list-passes           List all saved credentials with indices\n"
               << "  vaultt --edit pass=ID          Edit a specific password by index\n"
-              << "  vaultt --remove pass=ID        Delete a specific password by index\n";
+              << "  vaultt --remove pass=ID        Delete a specific password by index\n"
+              << "  vaultt --uninstall             Completely remove Vaultt files and binary\n";
 }
 
 void print_version()
@@ -216,6 +238,12 @@ int main(int argc, char* argv[])
     if (flag == "--version")
     {
         print_version();
+        return 0;
+    }
+
+    if (flag == "--uninstall")
+    {
+        engine.self_uninstall();
         return 0;
     }
 
