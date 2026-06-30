@@ -9,7 +9,7 @@
 namespace fs = std::filesystem;
 
 #ifndef VAULTT_USER
-#define VAULTT_USER "root"
+#define VAULTT_USER "default"
 #endif
 
 struct PasswordEntry
@@ -22,7 +22,7 @@ struct PasswordEntry
 class VaulttEngine
 {
 private:
-    std::string storage_file_path = "/home/" + std::string(VAULTT_USER) + "/wault/passwords.txt";
+    std::string storage_file_path = "/home/" + std::string(VAULTT_USER) + "/vaultt/passwords.txt";
 
 public:
     VaulttEngine()
@@ -132,12 +132,12 @@ void print_help()
 {
     std::cout << "Vaultt - Secure Password Manager CLI\n\n"
               << "Usage:\n"
-              << "  wault                         Interactive mode to add a new password entry\n"
-              << "  wault --help                  Display this help menu\n"
-              << "  wault --version               Display application version and logo\n"
-              << "  wault --list-passes           List all saved credentials with indices\n"
-              << "  wault --edit pass=ID          Edit a specific password by index\n"
-              << "  wault --remove pass=ID        Delete a specific password by index\n";
+              << "  vaultt                         Interactive mode to add a new password entry\n"
+              << "  vaultt --help                  Display this help menu\n"
+              << "  vaultt --version               Display application version and logo\n"
+              << "  vaultt --list-passes           List all saved credentials with indices\n"
+              << "  vaultt --edit pass=ID          Edit a specific password by index\n"
+              << "  vaultt --remove pass=ID        Delete a specific password by index\n";
 }
 
 void print_version()
@@ -200,7 +200,7 @@ int main(int argc, char* argv[])
         }
         else
         {
-            std::cerr << "Error: Failed to save credentials. Are you running as root?\n";
+            std::cerr << "Error: Failed to save credentials. Are you running as root or using sudo?\n";
         }
         return 0;
     }
@@ -243,7 +243,7 @@ int main(int argc, char* argv[])
         std::string arg = argv[2];
         if (arg.rfind("pass=", 0) != 0)
         {
-            std::cerr << "Error: Invalid argument. Use: wault --edit pass=0\n";
+            std::cerr << "Error: Invalid argument. Use: vaultt --edit pass=0\n";
             return 1;
         }
 
@@ -268,7 +268,7 @@ int main(int argc, char* argv[])
         std::string arg = argv[2];
         if (arg.rfind("pass=", 0) != 0)
         {
-            std::cerr << "Error: Invalid argument. Use: wault --remove pass=0\n";
+            std::cerr << "Error: Invalid argument. Use: vaultt --remove pass=0\n";
             return 1;
         }
 
