@@ -5,6 +5,7 @@
 #include <random>
 #include <filesystem>
 #include <algorithm>
+#include <unistd.h>
 
 namespace fs = std::filesystem;
 
@@ -23,7 +24,6 @@ class VaulttEngine
 {
 private:
     std::string storage_file_path = "/home/" + std::string(VAULTT_USER) + "/.config/vaultt/passwords.txt";
-    std::string binary_file_path = "/home/" + std::string(VAULTT_USER) + "/.local/bin/vaultt";
 
 public:
     VaulttEngine()
@@ -139,9 +139,16 @@ public:
         }
 
         std::cout << "Removing Vaultt binary...\n";
-        if (fs::exists(binary_file_path))
+        char buf[1024];
+        ssize_t len = readlink("/proc/self/exe", buf, sizeof(buf) - 1);
+        if (len != -1)
         {
-            fs::remove(binary_file_path);
+            buf[len] = '\0';
+            fs::path binary_path(buf);
+            if (fs::exists(binary_path))
+            {
+                fs::remove(binary_path);
+            }
         }
 
         std::cout << "--------------------------------------------------\n"
@@ -171,7 +178,7 @@ void print_version()
               << "  \\     /  / __ \\|  |  /  |_|  |  |  |  \n"
               << "   \\___/  (____  /____/|____/__|  |__|  \n"
               << "               \\/                       \n"
-              << "Vaultt version 2.1.0\n";
+              << "Vaultt version 3.0.0-LTS\n";
 }
 
 int main(int argc, char* argv[])

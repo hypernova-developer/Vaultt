@@ -18,6 +18,7 @@ g++ -O3 -static -std=c++17 -DVAULTT_USER=\"$TARGET_USER\" main.cpp -o vaultt
 if [ $? -eq 0 ]; then
   cp vaultt "$USER_HOME/.local/bin/"
   chmod +x "$USER_HOME/.local/bin/vaultt"
+  rm ./vaultt
   echo "--------------------------------------------------"
   echo "Compilation and installation successful!"
   echo "Binary copied to $USER_HOME/.local/bin/vaultt"
@@ -32,3 +33,4 @@ else
   echo "Compilation failed."
   exit 1
 fi
+
