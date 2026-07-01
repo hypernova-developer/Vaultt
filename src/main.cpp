@@ -22,8 +22,8 @@ struct PasswordEntry
 class VaulttEngine
 {
 private:
-    std::string storage_file_path = "/home/" + std::string(VAULTT_USER) + "/vaultt/passwords.txt";
-    std::string binary_file_path = "/usr/local/bin/vaultt";
+    std::string storage_file_path = "/home/" + std::string(VAULTT_USER) + "/.config/vaultt/passwords.txt";
+    std::string binary_file_path = "/home/" + std::string(VAULTT_USER) + "/.local/bin/vaultt";
 
 public:
     VaulttEngine()
@@ -37,6 +37,7 @@ public:
         if (!p.parent_path().empty() && !fs::exists(p.parent_path()))
         {
             fs::create_directories(p.parent_path());
+            fs::permissions(p.parent_path(), fs::perms::owner_all, fs::perm_options::replace);
         }
     }
 
@@ -44,13 +45,11 @@ public:
     {
         const std::string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+[]{}|;:,.<>?";
         std::random_device rd;
-        std::mt19937 generator(rd());
-        std::uniform_int_distribution<> distribution(0, static_cast<int>(chars.size() - 1));
-
         std::string password = "";
+        
         for (int i = 0; i < length; ++i)
         {
-            password += chars[distribution(generator)];
+            password += chars[rd() % chars.size()];
         }
         return password;
     }
@@ -96,6 +95,8 @@ public:
             file << entry.site << "|" << entry.username << "|" << entry.password << "\n";
         }
         file.close();
+        
+        fs::permissions(storage_file_path, fs::perms::owner_read | fs::perms::owner_write, fs::perm_options::replace);
         return true;
     }
 
@@ -137,7 +138,7 @@ public:
             fs::remove_all(p.parent_path());
         }
 
-        std::cout << "Removing Vaultt global binary...\n";
+        std::cout << "Removing Vaultt binary...\n";
         if (fs::exists(binary_file_path))
         {
             fs::remove(binary_file_path);
@@ -153,13 +154,13 @@ void print_help()
 {
     std::cout << "Vaultt - Secure Password Manager CLI\n\n"
               << "Usage:\n"
-              << "  vaultt                         Interactive mode to add a new password entry\n"
-              << "  vaultt --help                  Display this help menu\n"
-              << "  vaultt --version               Display application version and logo\n"
-              << "  vaultt --list-passes           List all saved credentials with indices\n"
-              << "  vaultt --edit pass=ID          Edit a specific password by index\n"
-              << "  vaultt --remove pass=ID        Delete a specific password by index\n"
-              << "  vaultt --uninstall             Completely remove Vaultt files and binary\n";
+              << "  vaultt                          Interactive mode to add a new password entry\n"
+              << "  vaultt --help                   Display this help menu\n"
+              << "  vaultt --version                Display application version and logo\n"
+              << "  vaultt --list-passes            List all saved credentials with indices\n"
+              << "  vaultt --edit pass=ID           Edit a specific password by index\n"
+              << "  vaultt --remove pass=ID         Delete a specific password by index\n"
+              << "  vaultt --uninstall              Completely remove Vaultt files and binary\n";
 }
 
 void print_version()
@@ -170,7 +171,7 @@ void print_version()
               << "  \\     /  / __ \\|  |  /  |_|  |  |  |  \n"
               << "   \\___/  (____  /____/|____/__|  |__|  \n"
               << "               \\/                       \n"
-              << "Vaultt version 2.0.0\n";
+              << "Vaultt version 2.1.0\n";
 }
 
 int main(int argc, char* argv[])
@@ -222,7 +223,7 @@ int main(int argc, char* argv[])
         }
         else
         {
-            std::cerr << "Error: Failed to save credentials. Are you running as root or using sudo?\n";
+            std::cerr << "Error: Failed to save credentials.\n";
         }
         return 0;
     }
@@ -286,7 +287,7 @@ int main(int argc, char* argv[])
         }
         else
         {
-            std::cerr << "Error: Invalid index or file write permission error.\n";
+            std::cerr << "Error: Invalid index or file write error.\n";
         }
         return 0;
     }
@@ -307,7 +308,7 @@ int main(int argc, char* argv[])
         }
         else
         {
-            std::cerr << "Error: Invalid index or file write permission error.\n";
+            std::cerr << "Error: Invalid index or file write error.\n";
         }
         return 0;
     }
